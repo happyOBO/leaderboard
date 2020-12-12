@@ -131,7 +131,7 @@ class ScenarioManager(object):
         while self._running:
             timestamp = None
             world = CarlaDataProvider.get_world()
-            
+            brake_on = False
 
             if world:
 
@@ -141,7 +141,6 @@ class ScenarioManager(object):
                 ego_location = ego_vehicle.get_location()
 
                 # initialize area info
-                order = ["front" , "left", "right"]
                 angle = { "front" : 0, "left" : -90.0 , "right" : 90.0 }
                 distance = {"front" : 10.0, "left" : 3.0, "right" : 3.0}
                 width = {"front" : ego_vehicle.bounding_box.extent.x ,  "left" : ego_vehicle.bounding_box.extent.y * 2, "right" : ego_vehicle.bounding_box.extent.y *2}
@@ -151,8 +150,9 @@ class ScenarioManager(object):
                 right_symmetry = {}
                 left_symmetry = {}
                 slope = {}
+                close_actors = []
                 
-                for i in order:
+                for i in angle.keys():
                     slope[i] = math.tan(math.radians(yaw + angle[i]))
                     interval_point[i] = carla.Location(ego_location.x + distance[i] * math.cos(math.radians(yaw + angle[i])) , ego_location.y + distance[i] * math.sin(math.radians(yaw + angle[i])) ,0.0)
                     left_symmetry[i] = carla.Location(- width[i] * slope[i] * math.sqrt(1/ (slope[i] **2 + 1)) + interval_point[i].x , width[i] * math.sqrt( 1 / (slope[i] **2 + 1)) + interval_point[i].y ,1.0)
@@ -175,15 +175,14 @@ class ScenarioManager(object):
                             
                             # Front, left, right area check 
                             vehicle_location = vehicle.get_location()
-                            for i in order:
+                            for i in angle.keys():
                                 front_diff = (vehicle_location.x - interval_point[i].x) / slope[i] + interval_point[i].y - vehicle_location.y
                                 back_diff = (vehicle_location.x - ego_location.x) / slope[i] + ego_location.y - vehicle_location.y
                                 left_diff = (vehicle_location.x - left_symmetry[i].x ) * slope[i] + left_symmetry[i].y - vehicle_location.y
                                 right_diff = (vehicle_location.x - right_symmetry[i].x) * slope[i] + right_symmetry[i].y - vehicle_location.y
                                 if(front_diff * back_diff < 0 and left_diff * right_diff < 0):
-                                    control.brake = 1
-                                    ego_vehicle.apply_control(control)
-                                    break
+                                    brake_on = True
+                                    close_actors.append(vehicle.type_id)
 
                 for walker in world.get_actors().filter('walker.*'):
                     if(ego_vehicle.id != walker.id and walker.is_alive):
@@ -197,25 +196,24 @@ class ScenarioManager(object):
 
                             # Front, left, right area check
                             walker_location = walker.get_location()
-                            for i in order:
+                            for i in angle.keys():
                                 front_diff = (walker_location.x - interval_point[i].x) / slope[i] + interval_point[i].y - walker_location.y
                                 back_diff = (walker_location.x - ego_location.x) / slope[i] + ego_location.y - walker_location.y
                                 left_diff = (walker_location.x - left_symmetry[i].x ) * slope[i] + left_symmetry[i].y - walker_location.y
                                 right_diff = (walker_location.x - right_symmetry[i].x) * slope[i] + right_symmetry[i].y - walker_location.y
                                 if(front_diff * back_diff < 0 and left_diff * right_diff < 0):
-                                    control.brake = 1
-                                    ego_vehicle.apply_control(control)
-                                    break
+                                    brake_on = True
+                                    close_actors.append(walker.type_id)
 
                 snapshot = world.get_snapshot()
                 if snapshot:
                     timestamp = snapshot.timestamp
             if timestamp:
-                self._tick_scenario(timestamp)
+                self._tick_scenario(timestamp,close_actors, brake_on)
 
 
 
-    def _tick_scenario(self, timestamp):
+    def _tick_scenario(self, timestamp , close_actors = None ,brake_on = False):
         """
         Run next tick of scenario and the agent and tick the world.
         """
@@ -231,8 +229,12 @@ class ScenarioManager(object):
 
             coll_value = list(filter(lambda x: x.name == "CollisionTest", self.scenario.get_criteria()))
             coll_value = coll_value[0].actual_value
+            control = self.ego_vehicles[0].get_control()
+
+            display_additional_info = {"throttle" : control.throttle, "steer" : control.steer, "brake" : control.brake , "collision" : coll_value , "actors" : close_actors}
+            
             try:
-                ego_action = self._agent.agent_call(coll_value) # print tick count # display 
+                ego_action = self._agent.agent_call(display_additional_info) # print tick count # display 
 
             # Special exception inside the agent that isn't caused by the agent
             except SensorReceivedNoData as e:
@@ -240,6 +242,7 @@ class ScenarioManager(object):
 
             except Exception as e:
                 raise AgentError(e)
+            ego_action.brake = 1 if brake_on else ego_action.brake
             self.ego_vehicles[0].apply_control(ego_action)
             # Tick scenario
             self.scenario_tree.tick_once()

@@ -51,12 +51,14 @@ class HumanInterface(object):
         # pygame.font.init()
         mono = 'ubuntumono'
         mono = pygame.font.match_font(mono)
-        self._font_mono = pygame.font.Font(mono, 20)
+        self._title_font = pygame.font.Font(mono, 20)
+        self._contents_font = pygame.font.Font(mono, 20)
+        self._list_actor_font = pygame.font.Font(mono, 15)
         self._clock = pygame.time.Clock()
         self._display = pygame.display.set_mode((self._width, self._height), pygame.HWSURFACE | pygame.DOUBLEBUF)
         pygame.display.set_caption("Human Agent")
 
-    def run_interface(self, input_data, coll):
+    def run_interface(self, input_data, display_additional_info = None):
         """
         Run the GUI
         """
@@ -67,8 +69,31 @@ class HumanInterface(object):
         self._surface = pygame.surfarray.make_surface(image_center.swapaxes(0, 1))
         if self._surface is not None:
             self._display.blit(self._surface, (0, 0))
-            surf2 = self._font_mono.render( "Collision : "+ str(coll), True, (255, 255, 255))
-            self._display.blit(surf2, (50, 50))
+            rect = pygame.Surface((self._width, 70))  # the size of your rect
+            rect.set_alpha(128)                # alpha level
+            rect.fill((0,0,0))           # this fills the entire surface
+            self._display.blit(rect, (0,0))    # (0,0) are the top-left coordinates
+            # offset
+            title_offset = 50
+            contents_offset = 65
+
+            for info in display_additional_info.keys():
+                if(info == "actors" ):
+                    info_surface = self._title_font.render( "Watch out!", True, (225, 0, 0))
+                    self._display.blit(info_surface, (title_offset, 10))
+                    actor_offset = 25
+                    for actor in display_additional_info[info]:
+                        info_surface = self._list_actor_font.render( actor, True, (225, 0, 0))
+                        self._display.blit(info_surface, (title_offset, actor_offset))
+                        actor_offset += 10
+
+                else:
+                    info_surface = self._title_font.render( info, True, (225, 225, 225))
+                    self._display.blit(info_surface, (title_offset, 10))
+                    contents_surface = self._contents_font.render( str("%1.2f" % display_additional_info[info]), True, (25, 15, 215))
+                    self._display.blit(contents_surface, (contents_offset, 33))
+                title_offset += 140
+                contents_offset += 140
         pygame.display.flip()
 
     def _quit(self):
@@ -121,12 +146,12 @@ class HumanAgent(AutonomousAgent):
 
         return sensors
 
-    def run_step(self, input_data, timestamp,coll):
+    def run_step(self, input_data, timestamp,display_additional_info = None):
         """
         Execute one step of navigation.
         """
         self.agent_engaged = True
-        self._hic.run_interface(input_data,coll)
+        self._hic.run_interface(input_data,display_additional_info)
 
         control = self._controller.parse_events(timestamp - self._prev_timestamp)
         self._prev_timestamp = timestamp
