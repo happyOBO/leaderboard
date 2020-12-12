@@ -75,8 +75,8 @@ class AgentWrapper(object):
         """
         return self._agent()
 
-    def agent_call(self, coll):
-        return self._agent.agent_call(coll)
+    def agent_call(self, display_additional_info = None):
+        return self._agent.agent_call(display_additional_info)
 
     def setup_sensors(self, vehicle, debug_mode=False):
         """

@@ -76,7 +76,7 @@ class AutonomousAgent(object):
 
         return sensors
 
-    def run_step(self, input_data, timestamp,coll = False):
+    def run_step(self, input_data, timestamp):
         """
         Execute one step of navigation.
         :return: control
@@ -96,7 +96,7 @@ class AutonomousAgent(object):
         """
         pass
 
-    def agent_call(self,coll = False):
+    def agent_call(self,display_additional_info = None):
         """
         Execute the agent call, e.g. agent()
         Returns the next vehicle controls
@@ -111,7 +111,7 @@ class AutonomousAgent(object):
 
         # print('======[Agent] Wallclock_time = {} / {} / Sim_time = {} / {}x'.format(wallclock, wallclock_diff, timestamp, timestamp/(wallclock_diff+0.001)))
 
-        control = self.run_step(input_data, timestamp,coll)
+        control = self.run_step(input_data, timestamp,display_additional_info)
         control.manual_gear_shift = False
 
         return control
