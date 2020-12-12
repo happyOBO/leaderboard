@@ -134,62 +134,78 @@ class ScenarioManager(object):
             
 
             if world:
+
+                # get ego vehicle info
                 ego_vehicle = self.ego_vehicles[0]
                 control = ego_vehicle.get_control()
                 ego_location = ego_vehicle.get_location()
+
+                # initialize area info
+                order = ["front" , "left", "right"]
+                angle = { "front" : 0, "left" : -90.0 , "right" : 90.0 }
+                distance = {"front" : 10.0, "left" : 3.0, "right" : 3.0}
+                width = {"front" : ego_vehicle.bounding_box.extent.x ,  "left" : ego_vehicle.bounding_box.extent.y * 2, "right" : ego_vehicle.bounding_box.extent.y *2}
+                
+                yaw = ego_vehicle.get_transform().rotation.yaw
+                interval_point = {}
+                right_symmetry = {}
+                left_symmetry = {}
+                slope = {}
+                
+                for i in order:
+                    slope[i] = math.tan(math.radians(yaw + angle[i]))
+                    interval_point[i] = carla.Location(ego_location.x + distance[i] * math.cos(math.radians(yaw + angle[i])) , ego_location.y + distance[i] * math.sin(math.radians(yaw + angle[i])) ,0.0)
+                    left_symmetry[i] = carla.Location(- width[i] * slope[i] * math.sqrt(1/ (slope[i] **2 + 1)) + interval_point[i].x , width[i] * math.sqrt( 1 / (slope[i] **2 + 1)) + interval_point[i].y ,1.0)
+                    right_symmetry[i] = carla.Location( width[i] * slope[i] * math.sqrt( 1 / (slope[i] **2 + 1)) + interval_point[i].x ,- width[i] * math.sqrt(1  / (slope[i]**2 + 1)) + interval_point[i].y ,1.0)
+                    
+                    # draw Area
+                    world.debug.draw_string( interval_point[i],"M", draw_shadow=False, color=carla.Color(225,0,0), life_time= 0.006)
+                    world.debug.draw_string( left_symmetry[i],"L", draw_shadow=False, color=carla.Color(225,0,0), life_time= 0.006)
+                    world.debug.draw_string( right_symmetry[i],"R", draw_shadow=False, color=carla.Color(225,0,0), life_time= 0.006)
+                
                 for vehicle in world.get_actors().filter('vehicle.*'):
-                    # draw Box 
-                    # ego_location = ego_vehicle.get_location()
                     if(ego_vehicle.id != vehicle.id and vehicle.is_alive):
                         if((ego_vehicle.get_location().x - vehicle.get_location().x)**2 + (ego_vehicle.get_location().y - vehicle.get_location().y)**2  < 2500):
+                            
+                            # draw Box
                             transform = vehicle.get_transform()
                             bounding_box = vehicle.bounding_box
                             bounding_box.location += transform.location
-                            # print(ego_vehicle.get_transform().rotation , ego_vehicle.get_transform().location)
                             world.debug.draw_box(bounding_box, transform.rotation, thickness = 0.07, color = carla.Color(10,15,219,0), life_time=0.006)
-
-
-                            # check front 10m
-                            yaw = ego_vehicle.get_transform().rotation.yaw
-                            # print(yaw,ang)
-                            interval_front_point = carla.Location(ego_vehicle.get_location().x + 10.0 * math.cos(math.radians(yaw)) , ego_vehicle.get_location().y + 10.0 * math.sin(math.radians(yaw)) ,0.0)
-                            interval_left_point = carla.Location(ego_vehicle.get_location().x + 3.0 * math.cos(math.radians(yaw + 90)) , ego_vehicle.get_location().y + 3.0 * math.sin(math.radians(yaw + 90)) ,0.0)
-                            interval_right_point = carla.Location(ego_vehicle.get_location().x + 3.0 * math.cos(math.radians(yaw - 90.0)) , ego_vehicle.get_location().y + 3.0 * math.sin(math.radians(yaw - 90.0)) ,0.0)
-                            # 기울기
-                            order = ["front" , "left", "right"]
-                            angle = { "front" : 0, "left" : -90.0 , "right" : 90.0 }
-                            distance = {"front" : 10.0, "left" : 3.0, "right" : 3.0}
-                            width = {"front" : 2 ,  "left" : 2.4, "right" : 2.4}
+                            
+                            # Front, left, right area check 
                             vehicle_location = vehicle.get_location()
                             for i in order:
-                                slope = math.tan(math.radians(yaw + angle[i]))
-                                interval_point = carla.Location(ego_location.x + distance[i] * math.cos(math.radians(yaw + angle[i])) , ego_location.y + distance[i] * math.sin(math.radians(yaw + angle[i])) ,0.0)
-                                left_symmetry = carla.Location(- width[i] * slope * math.sqrt(1/ (slope **2 + 1)) + interval_point.x , width[i] * math.sqrt( 1 / (slope **2 + 1)) + interval_point.y ,1.0)
-                                right_symmetry = carla.Location( width[i] * slope * math.sqrt( 1 / (slope**2 + 1)) + interval_point.x ,- width[i] * math.sqrt(1  / (slope**2 + 1)) + interval_point.y ,1.0)
-                                front_diff = (vehicle_location.x - interval_point.x) / slope + interval_point.y - vehicle_location.y
-                                back_diff = (vehicle_location.x - ego_location.x) / slope + ego_location.y - vehicle_location.y
-                                left_diff = (vehicle_location.x - left_symmetry.x ) * slope + left_symmetry.y - vehicle_location.y
-                                right_diff = (vehicle_location.x - right_symmetry.x) * slope + right_symmetry.y - vehicle_location.y
-                                left_slope_diff = slope * ((left_symmetry.y - right_symmetry.y)/(left_symmetry.x - right_symmetry.x))
-                                print(i,left_slope_diff)
-                                world.debug.draw_string( interval_point,"M", draw_shadow=False, color=carla.Color(225,0,0), life_time=-1.0)
-                                world.debug.draw_string( left_symmetry,"L", draw_shadow=False, color=carla.Color(225,0,0), life_time=-1.0)
-                                world.debug.draw_string( right_symmetry,"R", draw_shadow=False, color=carla.Color(225,0,0), life_time=-1.0)
+                                front_diff = (vehicle_location.x - interval_point[i].x) / slope[i] + interval_point[i].y - vehicle_location.y
+                                back_diff = (vehicle_location.x - ego_location.x) / slope[i] + ego_location.y - vehicle_location.y
+                                left_diff = (vehicle_location.x - left_symmetry[i].x ) * slope[i] + left_symmetry[i].y - vehicle_location.y
+                                right_diff = (vehicle_location.x - right_symmetry[i].x) * slope[i] + right_symmetry[i].y - vehicle_location.y
                                 if(front_diff * back_diff < 0 and left_diff * right_diff < 0):
                                     control.brake = 1
                                     ego_vehicle.apply_control(control)
-                                    left_slope_diff = slope * ((left_symmetry.y - right_symmetry.y)/(left_symmetry.x - right_symmetry.x))
                                     break
 
                 for walker in world.get_actors().filter('walker.*'):
-                    # draw Box 
                     if(ego_vehicle.id != walker.id and walker.is_alive):
                         if((ego_vehicle.get_location().x - walker.get_location().x)**2 + (ego_vehicle.get_location().y - walker.get_location().y)**2  < 2500):
+                            
+                            # draw Box
                             transform = walker.get_transform()
                             bounding_box = walker.bounding_box
                             bounding_box.location += transform.location
                             world.debug.draw_box(bounding_box, transform.rotation, thickness = 0.07, color = carla.Color(215,10,15,0), life_time=0.006)
-                
+
+                            # Front, left, right area check
+                            walker_location = walker.get_location()
+                            for i in order:
+                                front_diff = (walker_location.x - interval_point[i].x) / slope[i] + interval_point[i].y - walker_location.y
+                                back_diff = (walker_location.x - ego_location.x) / slope[i] + ego_location.y - walker_location.y
+                                left_diff = (walker_location.x - left_symmetry[i].x ) * slope[i] + left_symmetry[i].y - walker_location.y
+                                right_diff = (walker_location.x - right_symmetry[i].x) * slope[i] + right_symmetry[i].y - walker_location.y
+                                if(front_diff * back_diff < 0 and left_diff * right_diff < 0):
+                                    control.brake = 1
+                                    ego_vehicle.apply_control(control)
+                                    break
 
                 snapshot = world.get_snapshot()
                 if snapshot:
