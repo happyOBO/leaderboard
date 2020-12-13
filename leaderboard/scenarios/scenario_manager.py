@@ -186,7 +186,8 @@ class ScenarioManager(object):
                                 right_diff = (vehicle_location.x - right_symmetry[i].x) * slope[i] + right_symmetry[i].y - vehicle_location.y
                                 if(front_diff * back_diff < 0 and left_diff * right_diff < 0):
                                     brake_on = True
-                                    close_actors.append(vehicle.type_id)
+                                    if(vehicle.type_id not in close_actors):
+                                        close_actors.append(vehicle.type_id)
                 # walker check
 
                 for walker in world.get_actors().filter('walker.*'):
@@ -208,7 +209,8 @@ class ScenarioManager(object):
                                 right_diff = (walker_location.x - right_symmetry[i].x) * slope[i] + right_symmetry[i].y - walker_location.y
                                 if(front_diff * back_diff < 0 and left_diff * right_diff < 0):
                                     brake_on = True
-                                    close_actors.append(walker.type_id)
+                                    if(walker.type_id not in close_actors):
+                                        close_actors.append(walker.type_id)
 
                 snapshot = world.get_snapshot()
                 if snapshot:
