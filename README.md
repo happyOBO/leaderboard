@@ -6,6 +6,8 @@
 
 ## 1. 데모 영상
 
+[![Video Label](http://img.youtube.com/vi/K5ujXesSI_4/0.jpg)](https://youtu.be/K5ujXesSI_4)
+
 ## 2. 설치 및 실행 방법
 - 추가할 내용, 우분투 그 nvidia 설정한다.
 1. 기본 환경 설정

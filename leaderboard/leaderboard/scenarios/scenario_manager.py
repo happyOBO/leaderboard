@@ -119,7 +119,7 @@ class ScenarioManager(object):
         self._agent.setup_sensors(self.ego_vehicles[0], self._debug_mode)
 
 
-    def run_scenario(self,args):
+    def run_scenario(self):
         """
         Trigger the start of the scenario and wait for it to finish/fail
         """
@@ -164,17 +164,18 @@ class ScenarioManager(object):
                     world.debug.draw_string( right_symmetry[i],"R", draw_shadow=False, color=carla.Color(225,0,0), life_time= 0.006)
                 
                 for vehicle in world.get_actors().filter('vehicle.*'):
+                    vehicle_location = vehicle.get_location()
                     if(ego_vehicle.id != vehicle.id and vehicle.is_alive):
-                        if((ego_vehicle.get_location().x - vehicle.get_location().x)**2 + (ego_vehicle.get_location().y - vehicle.get_location().y)**2  < 2500):
+                        if((ego_location.x -vehicle_location.x)**2 + (ego_location.y - vehicle_location.y)**2  < 2500):
                             
                             # draw Box
                             transform = vehicle.get_transform()
                             bounding_box = vehicle.bounding_box
                             bounding_box.location += transform.location
-                            world.debug.draw_box(bounding_box, transform.rotation, thickness = 0.07, color = carla.Color(10,15,219,0), life_time=0.006)
+                            world.debug.draw_box(bounding_box, transform.rotation, thickness = 0.1, color = carla.Color(10,15,219,0), life_time=0.006)
                             
                             # Front, left, right area check 
-                            vehicle_location = vehicle.get_location()
+                            
                             for i in angle.keys():
                                 front_diff = (vehicle_location.x - interval_point[i].x) / slope[i] + interval_point[i].y - vehicle_location.y
                                 back_diff = (vehicle_location.x - ego_location.x) / slope[i] + ego_location.y - vehicle_location.y
@@ -185,17 +186,17 @@ class ScenarioManager(object):
                                     close_actors.append(vehicle.type_id)
 
                 for walker in world.get_actors().filter('walker.*'):
+                    walker_location = walker.get_location()
                     if(ego_vehicle.id != walker.id and walker.is_alive):
-                        if((ego_vehicle.get_location().x - walker.get_location().x)**2 + (ego_vehicle.get_location().y - walker.get_location().y)**2  < 2500):
+                        if((ego_location.x - walker_location.x)**2 + (ego_location.y - walker_location.y)**2  < 2500):
                             
                             # draw Box
                             transform = walker.get_transform()
                             bounding_box = walker.bounding_box
                             bounding_box.location += transform.location
-                            world.debug.draw_box(bounding_box, transform.rotation, thickness = 0.07, color = carla.Color(215,10,15,0), life_time=0.006)
+                            world.debug.draw_box(bounding_box, transform.rotation, thickness = 0.1, color = carla.Color(215,10,15,0), life_time=0.006)
 
                             # Front, left, right area check
-                            walker_location = walker.get_location()
                             for i in angle.keys():
                                 front_diff = (walker_location.x - interval_point[i].x) / slope[i] + interval_point[i].y - walker_location.y
                                 back_diff = (walker_location.x - ego_location.x) / slope[i] + ego_location.y - walker_location.y
