@@ -341,7 +341,7 @@ class LeaderboardEvaluator(object):
 
         # Run the scenario
         try:
-            self.manager.run_scenario(args) # /leaderboard/scenarios/scenario_manager.py
+            self.manager.run_scenario() # /leaderboard/scenarios/scenario_manager.py
 
         except AgentError as e:
             # The agent has failed -> stop the route
