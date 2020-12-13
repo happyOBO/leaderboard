@@ -67,7 +67,6 @@ class AgentWrapper(object):
         Set the autonomous agent
         """
         self._agent = agent
-        print("hello")
 
     def __call__(self):
         """
