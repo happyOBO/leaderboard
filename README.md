@@ -1,8 +1,8 @@
-# Carla 
+# Carla Simulator 
 
-- [데모 영상](https://github.com/happyOBO/Carla/tree/develop#1-%EB%8D%B0%EB%AA%A8-%EC%98%81%EC%83%81)
-- [설치 및 실행방법](https://github.com/happyOBO/Carla/tree/develop#2-%EC%84%A4%EC%B9%98-%EB%B0%8F-%EC%8B%A4%ED%96%89-%EB%B0%A9%EB%B2%95)
-- [코드 설명]()
+- [데모 영상](https://github.com/happyOBO/leaderboard/tree/main#1-데모-영상)
+- [설치 및 실행방법](https://github.com/happyOBO/leaderboard/tree/main#2-설치-및-실행-방법)
+- [코드 설명](https://github.com/happyOBO/leaderboard/tree/main#3-코드-설명)
 
 ## 1. 데모 영상
 
@@ -35,7 +35,7 @@
         ```
     5. 제가 변경한 ``leader_board`` 코드들을 다운 받고 ``python`` 종속성을 설치합니다.
         ```bash
-        git clone https://github.com/happyOBO/Carla
+        git clone https://github.com/happyOBO/leaderboard.git
         cd ${LEADERBOARD_ROOT} # Change ${LEADERBOARD_ROOT} for your Leaderboard root folder
         pip3 install -r requirements.txt
         ```
