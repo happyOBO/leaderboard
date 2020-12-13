@@ -1,8 +1,8 @@
 # Carla Simulator 
 
-- [데모 영상](https://github.com/happyOBO/leaderboard/tree/main#1-데모-영상)
-- [설치 및 실행방법](https://github.com/happyOBO/leaderboard/tree/main#2-설치-및-실행-방법)
-- [코드 설명](https://github.com/happyOBO/leaderboard/tree/main#3-코드-설명)
+- [데모 영상](https://github.com/happyOBO//leaderboard#1-데모-영상)
+- [설치 및 실행방법](https://github.com/happyOBO/leaderboard#2-설치-및-실행-방법)
+- [코드 설명](https://github.com/happyOBO/leaderboard#3-코드-설명)
 
 ## 1. 데모 영상
 
