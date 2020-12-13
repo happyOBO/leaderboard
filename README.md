@@ -16,9 +16,10 @@
     2. anaconda 설치
         - [anaconda 사이트](https://www.anaconda.com/products/individual#linux)에서 자신에게 맞게 설치합니다.
 2. 설치
-    1. 바이너리 파일 [CARLA 0.9.10.1](https://carla-releases.s3.eu-west-3.amazonaws.com/Linux/CARLA_0.9.10.1.tar.gz)을 다운로드 받습니다. 
+    1. 이미 ``carla (CARLA 0.9.10.1)``와 ``Scenario_Runner``가 있다면 5번 부터 진행해주시길 바랍니다.
+    2.  [CARLA 0.9.10.1](https://carla-releases.s3.eu-west-3.amazonaws.com/Linux/CARLA_0.9.10.1.tar.gz)을 다운로드 받습니다. 
 
-    2. 압축 파일을 풀고, CARLA PYTHON API를 사용하기 위해 몇가지 종속성을 설치합니다.
+    3. 압축 파일을 풀고, CARLA PYTHON API를 사용하기 위해 몇가지 종속성을 설치합니다.
         ```bash
         conda create -n py37 python=3.7
         conda activate py37 # 아나콘다 예전 버전은 source activate py37 
@@ -26,19 +27,19 @@
         pip3 install -r PythonAPI/carla/requirements.txt
         easy_install PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg
         ```
-    2. 제가 변경한 ``leader_board`` 코드들을 다운 받고 ``python`` 종속성을 설치합니다.
-        ```bash
-        git clone https://github.com/happyOBO/Carla
-        cd ${LEADERBOARD_ROOT} # Change ${LEADERBOARD_ROOT} for your Leaderboard root folder
-        pip3 install -r requirements.txt
-        ```
-    3. Scenario_Runner 레포지토리도 다운받고, 종속성을 설치합니다.
+    4. Scenario_Runner 레포지토리도 다운받고, 종속성을 설치합니다.
         ```bash
         git clone -b leaderboard --single-branch https://github.com/carla-simulator/scenario_runner.git
         cd ${SCENARIO_RUNNER_ROOT} # Change ${SCENARIO_RUNNER_ROOT} for your Scenario_Runner root folder
         pip3 install -r requirements.txt
         ```
-    4. ``~/.bashrc`` 파일에 아래와 같이 환경변수를 추가합니다.
+    5. 제가 변경한 ``leader_board`` 코드들을 다운 받고 ``python`` 종속성을 설치합니다.
+        ```bash
+        git clone https://github.com/happyOBO/Carla
+        cd ${LEADERBOARD_ROOT} # Change ${LEADERBOARD_ROOT} for your Leaderboard root folder
+        pip3 install -r requirements.txt
+        ```
+    6. ``~/.bashrc`` 파일에 아래와 같이 환경변수를 추가합니다.
         ```bash
         # .bashrc
         export CARLA_ROOT=PATH_TO_CARLA_ROOT
