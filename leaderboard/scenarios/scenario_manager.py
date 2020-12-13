@@ -152,6 +152,7 @@ class ScenarioManager(object):
                 slope = {}
                 close_actors = []
                 
+                # set Area
                 for i in angle.keys():
                     slope[i] = math.tan(math.radians(yaw + angle[i]))
                     interval_point[i] = carla.Location(ego_location.x + distance[i] * math.cos(math.radians(yaw + angle[i])) , ego_location.y + distance[i] * math.sin(math.radians(yaw + angle[i])) ,0.0)
@@ -159,10 +160,12 @@ class ScenarioManager(object):
                     right_symmetry[i] = carla.Location( width[i] * slope[i] * math.sqrt( 1 / (slope[i] **2 + 1)) + interval_point[i].x ,- width[i] * math.sqrt(1  / (slope[i]**2 + 1)) + interval_point[i].y ,1.0)
                     
                     # draw Area
-                    world.debug.draw_string( interval_point[i],"M", draw_shadow=False, color=carla.Color(225,0,0), life_time= 0.006)
-                    world.debug.draw_string( left_symmetry[i],"L", draw_shadow=False, color=carla.Color(225,0,0), life_time= 0.006)
-                    world.debug.draw_string( right_symmetry[i],"R", draw_shadow=False, color=carla.Color(225,0,0), life_time= 0.006)
+                    # world.debug.draw_string( interval_point[i],"M", draw_shadow=False, color=carla.Color(225,0,0), life_time= 0.006)
+                    # world.debug.draw_string( left_symmetry[i],"L", draw_shadow=False, color=carla.Color(225,0,0), life_time= 0.006)
+                    # world.debug.draw_string( right_symmetry[i],"R", draw_shadow=False, color=carla.Color(225,0,0), life_time= 0.006)
                 
+                # vehicle check
+
                 for vehicle in world.get_actors().filter('vehicle.*'):
                     vehicle_location = vehicle.get_location()
                     if(ego_vehicle.id != vehicle.id and vehicle.is_alive):
@@ -184,6 +187,7 @@ class ScenarioManager(object):
                                 if(front_diff * back_diff < 0 and left_diff * right_diff < 0):
                                     brake_on = True
                                     close_actors.append(vehicle.type_id)
+                # walker check
 
                 for walker in world.get_actors().filter('walker.*'):
                     walker_location = walker.get_location()
@@ -243,7 +247,10 @@ class ScenarioManager(object):
 
             except Exception as e:
                 raise AgentError(e)
+            
+            # set brake
             ego_action.brake = 1 if brake_on else ego_action.brake
+            
             self.ego_vehicles[0].apply_control(ego_action)
             # Tick scenario
             self.scenario_tree.tick_once()
