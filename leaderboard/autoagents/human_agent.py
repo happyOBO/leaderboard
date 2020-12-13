@@ -79,13 +79,14 @@ class HumanInterface(object):
 
             for info in display_additional_info.keys():
                 if(info == "actors" ):
-                    info_surface = self._title_font.render( "Watch out!", True, (225, 0, 0))
-                    self._display.blit(info_surface, (title_offset, 10))
-                    actor_offset = 25
-                    for actor in display_additional_info[info]:
-                        info_surface = self._list_actor_font.render( actor, True, (225, 0, 0))
-                        self._display.blit(info_surface, (title_offset, actor_offset))
-                        actor_offset += 10
+                    if(len(display_additional_info[info]) > 0):
+                        info_surface = self._title_font.render( "Watch out!", True, (225, 0, 0))
+                        self._display.blit(info_surface, (title_offset, 10))
+                        actor_offset = 25
+                        for actor in display_additional_info[info]:
+                            info_surface = self._list_actor_font.render( actor, True, (225, 0, 0))
+                            self._display.blit(info_surface, (title_offset, actor_offset))
+                            actor_offset += 10
 
                 else:
                     info_surface = self._title_font.render( info, True, (225, 225, 225))
