@@ -120,7 +120,7 @@
     - ``walker`` 또한 같은 과정을 거칩니다.
 4. agent는 keyboard 입력을 받아, ego vehicle의 steer, throttle, brake를 제어합니다.
     - 기본적으로 ``vehicle``의 컨트롤은 ``get_control()``을 통해 받아오고, ``apply_control()``을 통해 적용시킵니다.
-    - ``pygame.key.get_pressed()``를 통해 키보드 값을 받아오고, 키보드 값에 알맞게 해당 값을 변경시킵니다.
+    - ``human_agent.py``에서 ``pygame.key.get_pressed()``를 통해 키보드 값을 받아오고, 키보드 값에 알맞게 해당 값을 변경시킵니다.
         ```py
             if keys[K_UP] or keys[K_w]:
                 self._control.throttle = 0.6
