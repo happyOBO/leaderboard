@@ -139,13 +139,13 @@
         ```
 
 5. The agent maintains the brake value at 1.0 when another actor (Vehicle, Walker) exists within 0m ~ 10m in front of the ego vehicle and -3m ~ 3m in the left and right.
-    -  
+    - Use ``location'' and ``rotation'' of ``ego_vehicle'' to designate the front, left and right areas. With ``rotation.yaw'' you can find a point that is the desired ``distance'' in that direction.
         ```py
         # each angles 0, -90, 90 are front left right arrow. 
         interval_point.x = ego_location.x + distance * cos(radians(yaw + angle))
         interval_point.y = ego_location.y + distance * sin(radians(yaw + angle))
         ```
-    - Use ``location`` and ``rotation`` of ``ego_vehicle`` to designate the front, left and right areas. With ``rotation.yaw`` you can find a point that is the desired ``distance`` in that direction.
+    - You can get points ``left_symmetry'' and ``right_symmetry'' that are width apart from ``interval_point'' based on the direction of the vehicle.
         ```py
         # slope is tan(radians(yaw + angle))
         left_symmetry.x = - width * slope * math.sqrt(1/ (slope **2 + 1)) + interval_point.x 
