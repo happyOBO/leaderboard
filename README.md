@@ -16,7 +16,7 @@
     2. anaconda setting
         - [anaconda installation](https://www.anaconda.com/products/individual#linux)
         - Install the anaconda version that suits your computer from the site.
-2. 설치
+2. installation
     1. If you already have ``carla (CARLA 0.9.10.1)`` and ``Scenario_Runner``, please proceed from step 5.
     2. Download the binary **CARLA 0.9.10.1 release**.
         - [CARLA 0.9.10.1](https://carla-releases.s3.eu-west-3.amazonaws.com/Linux/CARLA_0.9.10.1.tar.gz) 
