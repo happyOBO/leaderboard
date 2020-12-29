@@ -1,14 +1,25 @@
 # Carla Simulator 
 
-- [Demo](https://github.com/happyOBO/leaderboard#1-데모-영상)
-- [Installation & Running](https://github.com/happyOBO/leaderboard#2-설치-및-실행-방법)
-- [Code Description](https://github.com/happyOBO/leaderboard#3-코드-설명)
+- [Demo](https://github.com/happyOBO/leaderboard#1-demo)
+- [Contents](https://github.com/happyOBO/leaderboard#2-contents)
+- [Installation & Running](https://github.com/happyOBO/leaderboard#3-installation--running)
+- [Code Description](https://github.com/happyOBO/leaderboard#4-code-description)
 
 ## 1. Demo
 
 [![Video Label](http://img.youtube.com/vi/K5ujXesSI_4/0.jpg)](https://youtu.be/K5ujXesSI_4)
 
-## 2. Installation & Running
+
+## 2. Contents
+
+1. Car simulator to check the number of automatic brakes and crashes
+2. The agent shows images taken from one camera sensor on the display every frame.
+3. The agent draws the bounding boxes of all vehicles and walkers located within a 50m radius of the ego vehicle overlaid on the image taken from the camera sensor.
+4. The agent receives keyboard input and controls the steer, throttle, and brake of the ego vehicle.
+5. The agent maintains the brake value at 1.0 when another actor (Vehicle, Walker) exists within 0m ~ 10m in front of the ego vehicle and -3m ~ 3m in the left and right.
+6. The agent counts CollisionEvents between the ego vehicle and other actors (Vehicle, Walker) and shows the number of collisions on the display as a score.
+
+## 3. Installation & Running
 
 1. Basic preferences
     1. Nvidia settings
@@ -74,7 +85,7 @@
         ```
     4. After execution, a screen similar to the demo video is displayed, and movement can be controlled through the arrow keys or the W, A, S, D keys. You can interrupt the current scenario and move to the next map with ``Ctrl`` + ``C`` keys.
 
-## 3. Code Description
+## 4. Code Description
 - Implemented by changing the code provided by ``leader_board``. Some of the files that I have implemented are ``${LEADERBOARD_ROOT}/leaderboard/scenarios/scenario_manager.py`` and ``${LEADERBOARD_ROOT}/leaderboard/autoagents/human_agent.py``.
 1. The agent shows images taken from one camera sensor on the display every frame.
     - Define ``sensor`` in ``human_agent.py``.
