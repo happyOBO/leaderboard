@@ -73,7 +73,7 @@
     4. 실행 후, 데모 영상과 같은 화면이 보이고, 방향키나 W, A, S, D 키를 통해 움직임을 제어할 수 있습니다. ``Ctrl`` + ``C`` 키를 통해 현재 시나리오를 중단 시키고 다음 맵으로 이동할 수 있습니다. 
 
 ## 3. 코드 설명
-- ``leader_board``에서 제공하는 코드를 변경해서 구현하였습니다. 제가 구현한 코드가 비중 높게 있는 파일들은 ``${LEADERBOARD_ROOT}/leaderboard/scenarios/scenario_manager.py`` 와 ``${LEADERBOARD_ROOT}/leaderboard/autoagents/human_agent.py`` 입니다.
+
 1. agent는 1개의 camera sensor로부터 들어오는 영상을 매 프레임 디스플레이에 보여줍니다.
     - ``human_agent.py``에서 ``sensor``를 정의합니다.
         ```py
